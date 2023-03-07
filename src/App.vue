@@ -5,18 +5,20 @@
   </header>
   <div class="container">
     <aside class="facets">
-      <h2>Filters</h2>
-      <span>Status</span>
+      <h2 class="filtersTitle">Filters</h2>
       <ul class="filters">
+        <li class="filters__label"><span>Status</span></li>
         <li v-for="filter in statusFilters" v-bind:key="filter">
-          <Filter filter-type="statusFilter" v-bind:filter="filter" v-on:clickCheckbox="changeRadio(filter,'status')">
+          <Filter filter-type="statusFilter" v-bind:filter="filter"
+                  v-on:clickButton="clickButton(filter,'status')">
           </Filter>
         </li>
       </ul>
-      <span>Gender</span>
       <ul class="filters">
+        <li class="filters__label"><span>Gender</span></li>
         <li v-for="filter in genderFilters" v-bind:key="filter">
-          <Filter filter-type="genderFilter" v-bind:filter="filter" v-on:clickCheckbox="changeRadio(filter,'gender')">
+          <Filter filter-type="genderFilter" v-bind:filter="filter"
+                  v-on:clickButton="clickButton(filter,'gender')">
           </Filter>
         </li>
       </ul>
@@ -34,87 +36,75 @@ import Filter from "@/components/Filter.vue";
 import BaseGrid from "@/components/BaseGrid.vue";
 import SearchInput from "@/components/SearchInput.vue";
 import ClearButton from "@/components/ClearButton.vue";
+
 export default {
   components: {ClearButton, Filter, Card, BaseGrid, SearchInput},
   data() {
     return {
       characters: [],
-      statusRadioActivated: '',
-      genderRadioActivated: '',
-      currentQuery: ''
+      statusFilterActivated: '',
+      genderFilterActivated: '',
+      currentQuery: '',
+      statusFilters: ['Alive', 'Dead', 'Unknown'],
     };
   },
   mounted() {
     this.initialLoad()
   },
   computed: {
-    statusFilters() {
-      return this.characters?.reduce((filters, character) => filters.add(character.status), new Set()) ?? [];
-    },
     genderFilters() {
       return this.characters?.reduce((filters, character) => filters.add(character.gender), new Set()) ?? [];
     },
 
   },
+  methods: {
+    search(event) {
+      const query = event.target.value;
+      this.currentQuery = query;
+      clearTimeout(this.searchTimer);
 
-
-    methods: {
-      search(event) {
-        const query = event.target.value;
-        this.currentQuery = query;
-        clearTimeout(this.searchTimer);
-        console.log(event.target.value)
-
-        this.searchTimer = setTimeout(() => {
-          console.log(this.statusRadioActivated)
-          fetch('https://rickandmortyapi.com/api/character/?name=' + query)
-              .then(response => response.json())
-              .then(data => {
-                this.characters = data.results;
-              });
-        }, 1000);
-      },
-
-      initialLoad() {
-        const query = '';
+      this.searchTimer = setTimeout(() => {
         fetch('https://rickandmortyapi.com/api/character/?name=' + query)
             .then(response => response.json())
             .then(data => {
               this.characters = data.results;
-            })
-      },
+            });
+      }, 1000);
+    },
 
-      changeRadio(radioValue, radioType) {
-        if (radioType === 'status') {
-          this.statusRadioActivated = radioValue;
-          this.visibleCharacters()
-        } else if (radioType === 'gender') {
-          this.genderRadioActivated = radioValue;
-          this.visibleCharacters()
-        }
-      },
+    initialLoad() {
+      const query = '';
+      fetch('https://rickandmortyapi.com/api/character/?name=' + query)
+          .then(response => response.json())
+          .then(data => {
+            this.characters = data.results;
+          })
+    },
 
-      visibleCharacters() {
-        console.log(this.genderRadioActivated)
-        console.log(this.statusRadioActivated)
-
-        if (this.statusRadioActivated.length > 0 || this.genderRadioActivated.length > 0) {
-          fetch('https://rickandmortyapi.com/api/character/?name=' + this.currentQuery + '&status=' + this.statusRadioActivated + '&gender=' + this.genderRadioActivated)
-              .then(response => response.json())
-              .then(data => {
-                this.characters = data.results;
-              })
-          return this.characters
-        } else {
-          return this.characters;
-        }
+    clickButton(buttonValue, filterType) {
+      if (filterType === 'status') {
+        this.statusFilterActivated === buttonValue ? this.statusFilterActivated = '' : this.statusFilterActivated = buttonValue
+        this.visibleCharacters()
+      } else if (filterType === 'gender') {
+        this.genderFilterActivated === buttonValue ? this.genderFilterActivated = '' : this.genderFilterActivated = buttonValue
+        this.visibleCharacters()
       }
+    },
+
+    visibleCharacters() {
+      fetch('https://rickandmortyapi.com/api/character/?name=' + this.currentQuery + '&status=' + this.statusFilterActivated + '&gender=' + this.genderFilterActivated)
+          .then(response => response.json())
+          .then(data => {
+            this.characters = data.results;
+          })
+      return this.characters
+    }
 
   }
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .header {
   display: flex;
   flex-direction: column;
@@ -128,15 +118,44 @@ export default {
   margin: 0 auto;
 }
 
+.facets{
+  margin-left: 20px;
+  margin-right: -30px;
+}
 
 
 .filters {
   width: 120px;
   list-style-type: none;
+
+  &__label {
+    font-size: 1em;
+    text-transform: uppercase;
+    margin-bottom:8px;
+  }
 }
 
 
 .container {
   display: flex;
+  font-family: Arial;
+}
+
+@media only screen and (max-width: 830px)  {
+  .container{
+    flex-direction:column;
+    align-items: center;
+  }
+  .facets{
+    display:flex;
+    margin: 0;
+  }
+  .filtersTitle{
+    display:none;
+  }
+  .logo{
+    width:80vw;
+  }
+
 }
 </style>

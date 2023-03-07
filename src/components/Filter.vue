@@ -1,21 +1,24 @@
 <template>
-  <label class="filter">{{filter}}
-    <input type="radio" v-bind:value="filter" v-bind:name="filterType" v-on:change="$emit('clickCheckbox',$event)" v-bind:value="val" v-model="selected" :id="val">
-  </label>
+    <button class="filter" v-bind:value="filter" v-bind:name="filterType" v-bind:class="{ enabled: isActive }"
+            @click="toggleEnabled"  v-on:click="$emit('clickButton',$event)">
+      {{ filter }}
+    </button>
 </template>
 
 <script>
 export default {
   name: "Filter",
   props: ['filter', 'filterType'],
-  data: {
-    d_selected: ''
-  },
-  methods: {
-    deselectFilter() {
-
+  methods:{
+    toggleEnabled(event) {
+      event.target.classList.toggle('enabled')
     }
-  }
+  },
+  computed: {
+    isActive() {
+      return this.filter === this.$parent.statusFilterActivated;
+    },
+},
 }
 
 
@@ -28,7 +31,15 @@ export default {
   cursor: pointer;
 }
 .filter {
-  margin-bottom: 8px;
+  font-size: 1em;
+  border-style:none;
+  background:none;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+.enabled{
+  font-weight:600;
 }
 
 </style>

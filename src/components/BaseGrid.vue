@@ -5,9 +5,7 @@
 </template>
 
 <script>
-import Filter from "@/components/Filter.vue";
 import Card from "@/components/Card.vue";
-
 export default {
   components: {Card},
   name: "BaseGrid"
@@ -18,7 +16,9 @@ export default {
 .characters {
   display: flex;
   flex-flow: row wrap;
+  justify-content: center;
   list-style-type: none;
   gap: 12px;
 }
+
 </style>
