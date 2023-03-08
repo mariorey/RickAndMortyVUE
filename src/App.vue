@@ -29,6 +29,7 @@
       </BaseGrid>
     </main>
   </div>
+  <footer class="footerInfo"> Created by <a class="gitHubLink" href="https://github.com/mariorey"> Mario Rey</a></footer>
 </template>
 <script lang="js">
 import Card from './components/Card.vue'
@@ -138,7 +139,7 @@ export default {
 
 .container {
   display: flex;
-  font-family: Arial;
+  font-family: 'Arial', sans-serif;
 }
 
 @media only screen and (max-width: 830px)  {
@@ -157,5 +158,20 @@ export default {
     width:80vw;
   }
 
+}
+
+.footerInfo{
+  display:flex;
+  height: 100px;
+  background: lightgrey;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Arial', sans-serif;
+  text-transform: uppercase;
+}
+
+.gitHubLink{
+  margin-left: 3px;
+  color: black;
 }
 </style>
