@@ -6,22 +6,12 @@
   <div class="container">
     <aside class="facets">
       <h2 class="filtersTitle">Filters</h2>
-      <ul class="filters">
-        <li class="filters__label"><span>Status</span></li>
-        <li v-for="filter in statusFilters" v-bind:key="filter">
-          <Filter filter-type="statusFilter" v-bind:filter="filter"
-                  v-on:clickButton="clickButton(filter,'status')">
-          </Filter>
-        </li>
-      </ul>
-      <ul class="filters">
-        <li class="filters__label"><span>Gender</span></li>
-        <li v-for="filter in genderFilters" v-bind:key="filter">
-          <Filter filter-type="genderFilter" v-bind:filter="filter"
-                  v-on:clickButton="clickButton(filter,'gender')">
-          </Filter>
-        </li>
-      </ul>
+      <FilterList filter-type="STATUS" v-bind:filters-collection="statusFilters" v-bind:status-filter-activated="statusFilterActivated"
+                  v-on:button-clicked="clickButton($event,'status')">
+      </FilterList>
+      <FilterList filter-type="GENDER" v-bind:filters-collection="genderFilters"
+      v-on:button-clicked="clickButton($event, 'gender')">
+      </FilterList>
     </aside>
     <main>
       <BaseGrid>
@@ -37,9 +27,10 @@ import Filter from "@/components/Filter.vue";
 import BaseGrid from "@/components/BaseGrid.vue";
 import SearchInput from "@/components/SearchInput.vue";
 import ClearButton from "@/components/ClearButton.vue";
+import FilterList from "@/components/FilterList.vue";
 
 export default {
-  components: {ClearButton, Filter, Card, BaseGrid, SearchInput},
+  components: {FilterList, ClearButton, Filter, Card, BaseGrid, SearchInput},
   data() {
     return {
       characters: [],
@@ -59,6 +50,7 @@ export default {
 
   },
   methods: {
+
     search(event) {
       const query = event.target.value;
       this.currentQuery = query;
@@ -83,6 +75,7 @@ export default {
     },
 
     clickButton(buttonValue, filterType) {
+      console.log(buttonValue)
       if (filterType === 'status') {
         this.statusFilterActivated === buttonValue ? this.statusFilterActivated = '' : this.statusFilterActivated = buttonValue
         this.visibleCharacters()
