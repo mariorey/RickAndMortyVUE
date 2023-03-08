@@ -1,4 +1,5 @@
 <template>
+
   <article v-bind:key="character.id" class="character">
     <img class="character__image" v-bind:alt="'Character image of'+character.name" v-bind:src="character.image"/>
     <div class="character__description">
@@ -67,6 +68,7 @@ export default {
     transition: 0.3s;
   }
 
+
   &__status {
     padding: 5px;
     color: white;
@@ -84,4 +86,8 @@ export default {
     }
   }
 }
+
+
+
+
 </style>

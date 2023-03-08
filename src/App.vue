@@ -1,25 +1,40 @@
 <template>
   <header class="header">
     <img alt="Rick and Morty character search" class="logo" src="./assets/logo.png"/>
+    <div class="header__toggleCharacters">
+      <button class="toggleCharacters" v-bind:class="{ 'enabled': !toggle }" value="characters" v-on:click="toggleCharacters">CHARACTERS</button>
+      <button class="toggleCharacters" v-bind:class="{ 'enabled': toggle }" value="episodes" v-on:click="toggleCharacters">EPISODES</button>
+    </div>
     <SearchInput v-on:textInput="search"/>
   </header>
-  <div class="container">
+  <div class="container" v-bind:class="{ 'disabled': toggle }">
     <aside class="facets">
       <h2 class="filtersTitle">Filters</h2>
-      <FilterList filter-type="STATUS" v-bind:filters-collection="statusFilters" v-bind:status-filter-activated="statusFilterActivated"
+      <FilterList filter-type="STATUS" v-bind:filters-collection="statusFilters"
+                  v-bind:status-filter-activated="statusFilterActivated"
                   v-on:button-clicked="clickButton($event,'status')">
       </FilterList>
       <FilterList filter-type="GENDER" v-bind:filters-collection="genderFilters"
-      v-on:button-clicked="clickButton($event, 'gender')">
+                  v-on:button-clicked="clickButton($event, 'gender')">
       </FilterList>
     </aside>
     <main>
       <BaseGrid>
-        <Card v-for="character in characters" v-bind:key="character.id" v-bind:character="character"/>
+        <TransitionGroup name="grid">
+          <Card v-for="character in characters" v-bind:key="character.id" v-bind:character="character"/>
+        </TransitionGroup>
       </BaseGrid>
     </main>
   </div>
-  <footer class="footerInfo"> Created by <a class="gitHubLink" href="https://github.com/mariorey"> Mario Rey</a></footer>
+  <div class="episodesContainer" v-bind:class="{ 'disabled': !toggle }">
+    <Episodes v-bind:query="currentQuery" v-bind:filter-active="seasonFilterActivated">
+      <FilterList class="seasonFilters" filter-type="SEASON" v-bind:filters-collection='seasons'
+                  v-on:button-clicked="clickButton($event, 'season')">
+      </FilterList>
+    </Episodes>
+  </div>
+  <footer class="footerInfo"> Created by <a class="gitHubLink" href="https://github.com/mariorey"> Mario Rey</a>
+  </footer>
 </template>
 <script lang="js">
 import Card from './components/Card.vue'
@@ -28,16 +43,20 @@ import BaseGrid from "@/components/BaseGrid.vue";
 import SearchInput from "@/components/SearchInput.vue";
 import ClearButton from "@/components/ClearButton.vue";
 import FilterList from "@/components/FilterList.vue";
+import Episodes from "@/components/Episodes.vue";
 
 export default {
-  components: {FilterList, ClearButton, Filter, Card, BaseGrid, SearchInput},
+  components: {Episodes, FilterList, ClearButton, Filter, Card, BaseGrid, SearchInput},
   data() {
     return {
       characters: [],
+      seasons: ['S01', 'S02', 'S03', 'S04', 'S05'],
       statusFilterActivated: '',
       genderFilterActivated: '',
+      seasonFilterActivated: '',
       currentQuery: '',
       statusFilters: ['Alive', 'Dead', 'Unknown'],
+      toggle: false,
     };
   },
   mounted() {
@@ -75,13 +94,15 @@ export default {
     },
 
     clickButton(buttonValue, filterType) {
-      console.log(buttonValue)
+
       if (filterType === 'status') {
         this.statusFilterActivated === buttonValue ? this.statusFilterActivated = '' : this.statusFilterActivated = buttonValue
         this.visibleCharacters()
       } else if (filterType === 'gender') {
         this.genderFilterActivated === buttonValue ? this.genderFilterActivated = '' : this.genderFilterActivated = buttonValue
         this.visibleCharacters()
+      } else if (filterType === 'season') {
+        this.seasonFilterActivated === buttonValue ? this.seasonFilterActivated = '' : this.seasonFilterActivated = buttonValue
       }
     },
 
@@ -92,6 +113,10 @@ export default {
             this.characters = data.results;
           })
       return this.characters
+    },
+
+    toggleCharacters(event) {
+      this.toggle = event.target.value !== 'characters';
     }
 
   }
@@ -105,6 +130,14 @@ export default {
   justify-content: center;
   width: 100%;
   margin: 1em;
+
+  &__toggleCharacters {
+    color: dimgrey;
+    display: flex;
+
+    justify-content: center;
+    border-radius: 0;
+  }
 }
 
 .logo {
@@ -112,21 +145,29 @@ export default {
   margin: 0 auto;
 }
 
-.facets{
+.facets {
   margin-left: 20px;
   margin-right: -30px;
 }
 
+.filter:hover {
+  font-weight: 600;
+  cursor: pointer;
+}
 
-.filters {
-  width: 120px;
-  list-style-type: none;
+.toggleCharacters {
+  font-size: 1em;
+  cursor: pointer;
+  border-style: none;
+  background: none;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
 
-  &__label {
-    font-size: 1em;
-    text-transform: uppercase;
-    margin-bottom:8px;
-  }
+}
+
+.enabled {
+  font-weight: 600;
 }
 
 
@@ -135,26 +176,34 @@ export default {
   font-family: 'Arial', sans-serif;
 }
 
-@media only screen and (max-width: 830px)  {
-  .container{
-    flex-direction:column;
+.episodesContainer {
+  display: flex;
+}
+
+.disabled {
+  display: none;
+}
+
+@media only screen and (max-width: 830px) {
+  .container {
+    flex-direction: column;
     align-items: center;
   }
-  .facets{
-    display:flex;
+  .facets {
+    display: flex;
     margin: 0;
   }
-  .filtersTitle{
-    display:none;
+  .filtersTitle {
+    display: none;
   }
-  .logo{
-    width:80vw;
+  .logo {
+    width: 80vw;
   }
 
 }
 
-.footerInfo{
-  display:flex;
+.footerInfo {
+  display: flex;
   height: 100px;
   background: lightgrey;
   justify-content: center;
@@ -163,8 +212,20 @@ export default {
   text-transform: uppercase;
 }
 
-.gitHubLink{
+.gitHubLink {
   margin-left: 3px;
   color: black;
+}
+
+.grid-enter-active,
+.grid-leave-active {
+  transition: all .5s ease;
+  transition-delay: .1s;
+}
+
+.grid-enter-from,
+.grid-leave-to {
+  opacity: 0;
+  transform: scale(.5);
 }
 </style>
