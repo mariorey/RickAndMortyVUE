@@ -16,7 +16,7 @@
 
 <script>
 export default {
-  props: ['query', 'filterActive'],
+  props: ['query', 'filterActive', 'toggle'],
   data() {
     return {
       episodes: [],
@@ -39,12 +39,14 @@ export default {
     },
 
     fetchEpisodeByName(query){
-      console.log(this.filterActive)
-      fetch('https://rickandmortyapi.com/api/episode?name=' + query + '&episode=' + this.filterActive)
-          .then(response => response.json())
-          .then(data => {
-            this.episodes = data.results;
-          });
+      if(this.toggle){
+        fetch('https://rickandmortyapi.com/api/episode?name=' + query + '&episode=' + this.filterActive)
+            .then(response => response.json())
+            .then(data => {
+              this.episodes = data.results;
+            });
+      }
+
     },
 
 
@@ -89,8 +91,6 @@ export default {
 .aside{
   padding-top: 60px;
 }
-
-
 
 .list-enter-active,
 .list-leave-active {

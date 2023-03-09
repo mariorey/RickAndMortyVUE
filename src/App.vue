@@ -27,7 +27,7 @@
     </main>
   </div>
   <div class="episodesContainer" v-bind:class="{ 'disabled': !toggle }">
-    <Episodes v-bind:query="currentQuery" v-bind:filter-active="seasonFilterActivated">
+    <Episodes v-bind:toggle="toggle" v-bind:query="currentQuery" v-bind:filter-active="seasonFilterActivated">
       <FilterList class="seasonFilters" filter-type="SEASON" v-bind:filters-collection='seasons'
                   v-on:button-clicked="clickButton($event, 'season')">
       </FilterList>
@@ -117,7 +117,8 @@ export default {
 
     toggleCharacters(event) {
       this.toggle = event.target.value !== 'characters';
-    }
+    },
+
 
   }
 }
