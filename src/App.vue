@@ -5,17 +5,13 @@
       <button class="toggleCharacters" v-bind:class="{ 'enabled': !toggle }" value="characters" v-on:click="toggleCharacters">CHARACTERS</button>
       <button class="toggleCharacters" v-bind:class="{ 'enabled': toggle }" value="episodes" v-on:click="toggleCharacters">EPISODES</button>
     </div>
-    <SearchInput v-on:textInput="search"/>
+    <SearchInput/>
   </header>
   <div class="container" v-bind:class="{ 'disabled': toggle }">
     <aside class="facets">
-      <h2 class="filtersTitle">Filters</h2>
-      <FilterList filter-type="STATUS" v-bind:filters-collection="statusFilters"
-                  v-bind:status-filter-activated="statusFilterActivated"
-                  v-on:button-clicked="clickButton($event,'status')">
+      <FilterList filter-type="status" v-bind:filters-collection="statusFilters">
       </FilterList>
-      <FilterList filter-type="GENDER" v-bind:filters-collection="genderFilters"
-                  v-on:button-clicked="clickButton($event, 'gender')">
+      <FilterList filter-type="gender" v-bind:filters-collection="genderFilters">
       </FilterList>
     </aside>
     <main>
@@ -27,9 +23,8 @@
     </main>
   </div>
   <div class="episodesContainer" v-bind:class="{ 'disabled': !toggle }">
-    <Episodes v-bind:toggle="toggle" v-bind:query="currentQuery" v-bind:filter-active="seasonFilterActivated">
-      <FilterList class="seasonFilters" filter-type="SEASON" v-bind:filters-collection='seasons'
-                  v-on:button-clicked="clickButton($event, 'season')">
+    <Episodes v-bind:toggle="toggle">
+      <FilterList class="seasonFilters" filter-type="season" v-bind:filters-collection='seasons'>
       </FilterList>
     </Episodes>
   </div>
@@ -51,68 +46,44 @@ export default {
     return {
       characters: [],
       seasons: ['S01', 'S02', 'S03', 'S04', 'S05'],
-      statusFilterActivated: '',
-      genderFilterActivated: '',
-      seasonFilterActivated: '',
-      currentQuery: '',
       statusFilters: ['Alive', 'Dead', 'Unknown'],
       toggle: false,
     };
   },
   mounted() {
-    this.initialLoad()
+    this.search()
   },
   computed: {
     genderFilters() {
       return this.characters?.reduce((filters, character) => filters.add(character.gender), new Set()) ?? [];
     },
-
+    query(){
+      return this.$store.state.query
+    },
+    filters(){
+      return [this.$store.state.statusFilterActivated, this.$store.state.genderFilterActivated]
+    }
+  },
+  watch:{
+    query(){
+      this.search()
+    },
+    filters(){
+      deep: true,
+      this.search()
+    }
   },
   methods: {
 
-    search(event) {
-      const query = event.target.value;
-      this.currentQuery = query;
+    search() {
       clearTimeout(this.searchTimer);
-
       this.searchTimer = setTimeout(() => {
-        fetch('https://rickandmortyapi.com/api/character/?name=' + query)
+        fetch('https://rickandmortyapi.com/api/character/?name=' + this.$store.state.query + '&status=' + this.$store.state.statusFilterActivated + '&gender=' + this.$store.state.genderFilterActivated)
             .then(response => response.json())
             .then(data => {
               this.characters = data.results;
             });
-      }, 1000);
-    },
-
-    initialLoad() {
-      const query = '';
-      fetch('https://rickandmortyapi.com/api/character/?name=' + query)
-          .then(response => response.json())
-          .then(data => {
-            this.characters = data.results;
-          })
-    },
-
-    clickButton(buttonValue, filterType) {
-
-      if (filterType === 'status') {
-        this.statusFilterActivated === buttonValue ? this.statusFilterActivated = '' : this.statusFilterActivated = buttonValue
-        this.visibleCharacters()
-      } else if (filterType === 'gender') {
-        this.genderFilterActivated === buttonValue ? this.genderFilterActivated = '' : this.genderFilterActivated = buttonValue
-        this.visibleCharacters()
-      } else if (filterType === 'season') {
-        this.seasonFilterActivated === buttonValue ? this.seasonFilterActivated = '' : this.seasonFilterActivated = buttonValue
-      }
-    },
-
-    visibleCharacters() {
-      fetch('https://rickandmortyapi.com/api/character/?name=' + this.currentQuery + '&status=' + this.statusFilterActivated + '&gender=' + this.genderFilterActivated)
-          .then(response => response.json())
-          .then(data => {
-            this.characters = data.results;
-          })
-      return this.characters
+      }, 500);
     },
 
     toggleCharacters(event) {

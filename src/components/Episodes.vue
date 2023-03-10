@@ -16,11 +16,19 @@
 
 <script>
 export default {
-  props: ['query', 'filterActive', 'toggle'],
+  props: ['toggle'],
   data() {
     return {
       episodes: [],
     };
+  },
+  computed: {
+    query(){
+      return this.$store.state.query
+    },
+    filter(){
+      return this.$store.state.seasonFilterActivated
+    }
   },
   mounted() {
     this.initialLoad()
@@ -40,7 +48,7 @@ export default {
 
     fetchEpisodeByName(query){
       if(this.toggle){
-        fetch('https://rickandmortyapi.com/api/episode?name=' + query + '&episode=' + this.filterActive)
+        fetch('https://rickandmortyapi.com/api/episode?name=' + query + '&episode=' + this.$store.state.seasonFilterActivated)
             .then(response => response.json())
             .then(data => {
               this.episodes = data.results;
@@ -60,8 +68,8 @@ export default {
         this.fetchEpisodeByName(newQuery);
       }
     },
-    filterActive(newFilter){
-      newFilter !== '' ? this.fetchEpisodeByName(this.query) : this.initialLoad()
+    filter(newFilter){
+      newFilter !== '' ? this.fetchEpisodeByName(this.$store.state.query) : this.initialLoad()
     }
 
   }

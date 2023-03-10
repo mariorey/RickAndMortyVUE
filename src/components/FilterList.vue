@@ -4,7 +4,7 @@
     <TransitionGroup name="list">
     <li v-for="filter in filtersCollection" v-bind:key="filter">
 
-      <Filter filter-type={filterType} v-bind:filter="filter" v-on:clickButton="buttonClicked(filter,filterType)">
+      <Filter v-bind:filter-type=filterType v-bind:filter="filter" v-on:clickButton="buttonClicked(filter,filterType)">
       </Filter>
     </li>
     </TransitionGroup>

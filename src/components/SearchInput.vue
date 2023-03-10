@@ -1,10 +1,15 @@
 <template>
-  <input class="search" placeholder="Search for a character" v-on:input="$emit('textInput',$event)"/>
+  <input class="search" placeholder="Search for a character" v-on:input="changeQuery"/>
 </template>
 
 <script>
 export default {
-  name: "SearchInput"
+  name: "SearchInput",
+  methods: {
+    changeQuery(event){
+      this.$store.state.query = event.target.value
+    }
+  }
 }
 </script>
 

@@ -1,6 +1,6 @@
 <template>
     <button class="filter" v-bind:value="filter" v-bind:name="filterType" v-bind:class="{ enabled: isActive }"
-            @click="toggleEnabled"  v-on:click="$emit('clickButton',$event)">
+            @click="toggleEnabled"  v-on:click="clickButton">
       {{ filter }}
     </button>
 </template>
@@ -12,11 +12,25 @@ export default {
   methods:{
     toggleEnabled(event) {
       event.target.classList.toggle('enabled')
+    },
+    clickButton(event){
+      if(this.filterType.toString() === 'status'){
+        this.$store.state.statusFilterActivated === event.target.value ? this.$store.state.statusFilterActivated = ''
+            : this.$store.state.statusFilterActivated = event.target.value
+      }
+      else if(this.filterType.toString() === 'gender'){
+        this.$store.state.genderFilterActivated === event.target.value ? this.$store.state.genderFilterActivated = ''
+            : this.$store.state.genderFilterActivated = event.target.value
+      }
+      else if(this.filterType.toString() === 'season'){
+        this.$store.state.seasonFilterActivated === event.target.value ? this.$store.state.seasonFilterActivated = ''
+            : this.$store.state.seasonFilterActivated = event.target.value
+      }
     }
   },
   computed: {
     isActive() {
-      return this.filter === this.$parent.statusFilterActivated;
+      return this.filter === this.$store.state.statusFilterActivated;
     },
 },
 }
