@@ -4,6 +4,7 @@ import {createStore} from "vuex";
 
 const store = createStore({
     state: {
+        characters: [],
         query: '',
         statusFilterActivated: '',
         genderFilterActivated: '',
@@ -11,7 +12,8 @@ const store = createStore({
     },
     getters: {
 
-    }
+    },
+
 })
 
 createApp(App).use(store).mount('#app')

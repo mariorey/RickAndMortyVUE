@@ -20,6 +20,12 @@
           <Card v-for="character in characters" v-bind:key="character.id" v-bind:character="character"/>
         </TransitionGroup>
       </BaseGrid>
+      <div class="buttonsContainer">
+        <button class="buttonsContainer__button" v-bind:class="{ 'disabled': prevUri===null}" v-on:click="search(prevUri)"><img width="25" alt="Prev Page" src="https://uxwing.com/wp-content/themes/uxwing/download/arrow-direction/left-chevron-arrow-round-outline-icon.png"></button>
+        <span>Pages</span>
+        <button class="buttonsContainer__button" v-bind:class="{ 'disabled': nextUri===null}" v-on:click="search(nextUri)"><img width="25" alt="Next Page" src="https://uxwing.com/wp-content/themes/uxwing/download/arrow-direction/right-chevron-arrow-round-outline-icon.png"></button>
+      </div>
+
     </main>
   </div>
   <div class="episodesContainer" v-bind:class="{ 'disabled': !toggle }">
@@ -40,6 +46,8 @@ import ClearButton from "@/components/ClearButton.vue";
 import FilterList from "@/components/FilterList.vue";
 import Episodes from "@/components/Episodes.vue";
 
+
+
 export default {
   components: {Episodes, FilterList, ClearButton, Filter, Card, BaseGrid, SearchInput},
   data() {
@@ -48,6 +56,8 @@ export default {
       seasons: ['S01', 'S02', 'S03', 'S04', 'S05'],
       statusFilters: ['Alive', 'Dead', 'Unknown'],
       toggle: false,
+      nextUri: '',
+      prevUri: ''
     };
   },
   mounted() {
@@ -69,19 +79,20 @@ export default {
       this.search()
     },
     filters(){
-      deep: true,
       this.search()
     }
   },
   methods: {
 
-    search() {
+    search(uri = 'https://rickandmortyapi.com/api/character/?name=' + this.$store.state.query + '&status=' + this.$store.state.statusFilterActivated + '&gender=' + this.$store.state.genderFilterActivated) {
       clearTimeout(this.searchTimer);
       this.searchTimer = setTimeout(() => {
-        fetch('https://rickandmortyapi.com/api/character/?name=' + this.$store.state.query + '&status=' + this.$store.state.statusFilterActivated + '&gender=' + this.$store.state.genderFilterActivated)
+        fetch(uri)
             .then(response => response.json())
             .then(data => {
               this.characters = data.results;
+              this.nextUri = data.info.next
+              this.prevUri = data.info.prev
             });
       }, 500);
     },
@@ -125,6 +136,17 @@ export default {
 .filter:hover {
   font-weight: 600;
   cursor: pointer;
+}
+
+.buttonsContainer {
+  display: flex;
+  justify-content: center;
+  align-items:center;
+  margin: 10px;
+  &__button{
+    border-style:none;
+    background:none;
+  }
 }
 
 .toggleCharacters {
