@@ -16,9 +16,14 @@ export default {
 .characters {
   display: flex;
   flex-flow: row wrap;
-  justify-content: center;
   list-style-type: none;
   gap: 12px;
+}
+
+@media only screen and (max-width: 900px) {
+  .characters{
+    justify-content: center;
+  }
 }
 
 </style>

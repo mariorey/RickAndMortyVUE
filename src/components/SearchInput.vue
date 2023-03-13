@@ -7,7 +7,7 @@ export default {
   name: "SearchInput",
   methods: {
     changeQuery(event){
-      this.$store.state.query = event.target.value
+      this.$store.commit('setQuery', event.target.value)
     }
   }
 }

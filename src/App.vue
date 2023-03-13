@@ -21,9 +21,9 @@
         </TransitionGroup>
       </BaseGrid>
       <div class="buttonsContainer">
-        <button class="buttonsContainer__button" v-bind:class="{ 'disabled': prevUri===null}" v-on:click="search(prevUri)"><img width="25" alt="Prev Page" src="https://uxwing.com/wp-content/themes/uxwing/download/arrow-direction/left-chevron-arrow-round-outline-icon.png"></button>
-        <span>Pages</span>
-        <button class="buttonsContainer__button" v-bind:class="{ 'disabled': nextUri===null}" v-on:click="search(nextUri)"><img width="25" alt="Next Page" src="https://uxwing.com/wp-content/themes/uxwing/download/arrow-direction/right-chevron-arrow-round-outline-icon.png"></button>
+        <button class="buttonsContainer__button" v-bind:class="{ 'disabled': prevPage===''}" v-on:click="search(prevPage)"><img width="25" alt="Prev Page" src="https://uxwing.com/wp-content/themes/uxwing/download/arrow-direction/left-chevron-arrow-round-outline-icon.png"></button>
+        <span v-bind:class="{ 'disabled': prevPage==='' && nextPage===''}">Pages</span>
+        <button class="buttonsContainer__button" v-bind:class="{ 'disabled': nextPage===''}" v-on:click="search(nextPage)"><img width="25" alt="Next Page" src="https://uxwing.com/wp-content/themes/uxwing/download/arrow-direction/right-chevron-arrow-round-outline-icon.png"></button>
       </div>
 
     </main>
@@ -45,19 +45,17 @@ import SearchInput from "@/components/SearchInput.vue";
 import ClearButton from "@/components/ClearButton.vue";
 import FilterList from "@/components/FilterList.vue";
 import Episodes from "@/components/Episodes.vue";
-
+import { mapState } from 'vuex';
+import { mapActions } from 'vuex'
 
 
 export default {
   components: {Episodes, FilterList, ClearButton, Filter, Card, BaseGrid, SearchInput},
   data() {
     return {
-      characters: [],
       seasons: ['S01', 'S02', 'S03', 'S04', 'S05'],
       statusFilters: ['Alive', 'Dead', 'Unknown'],
       toggle: false,
-      nextUri: '',
-      prevUri: ''
     };
   },
   mounted() {
@@ -67,34 +65,26 @@ export default {
     genderFilters() {
       return this.characters?.reduce((filters, character) => filters.add(character.gender), new Set()) ?? [];
     },
-    query(){
-      return this.$store.state.query
-    },
-    filters(){
-      return [this.$store.state.statusFilterActivated, this.$store.state.genderFilterActivated]
-    }
+    ...mapState(['characters' ,'query', 'statusFilterActivated', 'genderFilterActivated', 'prevPage', 'nextPage']),
   },
   watch:{
     query(){
       this.search()
     },
-    filters(){
+    statusFilterActivated(){
+      this.search()
+    },
+    genderFilterActivated(){
       this.search()
     }
   },
   methods: {
-
-    search(uri = 'https://rickandmortyapi.com/api/character/?name=' + this.$store.state.query + '&status=' + this.$store.state.statusFilterActivated + '&gender=' + this.$store.state.genderFilterActivated) {
+    ...mapActions(['fetchAPI']),
+    search(uri = 'https://rickandmortyapi.com/api/character/?name=' + this.$store.getters.getQuery + '&status=' + this.statusFilterActivated + '&gender=' + this.genderFilterActivated) {
       clearTimeout(this.searchTimer);
       this.searchTimer = setTimeout(() => {
-        fetch(uri)
-            .then(response => response.json())
-            .then(data => {
-              this.characters = data.results;
-              this.nextUri = data.info.next
-              this.prevUri = data.info.prev
-            });
-      }, 500);
+      this.fetchAPI(uri)
+      }, 300);
     },
 
     toggleCharacters(event) {
@@ -112,7 +102,8 @@ export default {
   flex-direction: column;
   justify-content: center;
   width: 100%;
-  margin: 1em;
+  margin-bottom: 1em;
+  margin-top: 1em;
 
   &__toggleCharacters {
     color: dimgrey;
@@ -130,7 +121,6 @@ export default {
 
 .facets {
   margin-left: 20px;
-  margin-right: -30px;
 }
 
 .filter:hover {
@@ -213,7 +203,7 @@ export default {
 
 .grid-enter-active,
 .grid-leave-active {
-  transition: all .5s ease;
+  transition: all .3s ease;
   transition-delay: .1s;
 }
 

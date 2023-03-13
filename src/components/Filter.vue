@@ -6,6 +6,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 export default {
   name: "Filter",
   props: ['filter', 'filterType'],
@@ -15,16 +16,16 @@ export default {
     },
     clickButton(event){
       if(this.filterType.toString() === 'status'){
-        this.$store.state.statusFilterActivated === event.target.value ? this.$store.state.statusFilterActivated = ''
-            : this.$store.state.statusFilterActivated = event.target.value
+        this.statusFilterActivated === event.target.value ? this.$store.commit('setStatusFilterActivated', '')
+            : this.$store.commit('setStatusFilterActivated', event.target.value)
       }
       else if(this.filterType.toString() === 'gender'){
-        this.$store.state.genderFilterActivated === event.target.value ? this.$store.state.genderFilterActivated = ''
-            : this.$store.state.genderFilterActivated = event.target.value
+        this.genderFilterActivated === event.target.value ? this.$store.commit('setGenderFilterActivated', '')
+            : this.$store.commit('setGenderFilterActivated', event.target.value)
       }
       else if(this.filterType.toString() === 'season'){
-        this.$store.state.seasonFilterActivated === event.target.value ? this.$store.state.seasonFilterActivated = ''
-            : this.$store.state.seasonFilterActivated = event.target.value
+        this.seasonFilterActivated === event.target.value ? this.$store.commit('setSeasonFilterActivated', '')
+            : this.$store.commit('setSeasonFilterActivated', event.target.value)
       }
     }
   },
@@ -32,6 +33,8 @@ export default {
     isActive() {
       return this.filter === this.$store.state.statusFilterActivated;
     },
+    ...mapState(["statusFilterActivated", "genderFilterActivated", "seasonFilterActivated"])
+
 },
 }
 

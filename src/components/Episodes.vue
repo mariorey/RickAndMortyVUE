@@ -15,6 +15,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 export default {
   props: ['toggle'],
   data() {
@@ -23,12 +24,7 @@ export default {
     };
   },
   computed: {
-    query(){
-      return this.$store.state.query
-    },
-    filter(){
-      return this.$store.state.seasonFilterActivated
-    }
+    ...mapState(['query', "seasonFilterActivated"])
   },
   mounted() {
     this.initialLoad()
@@ -48,7 +44,7 @@ export default {
 
     fetchEpisodeByName(query){
       if(this.toggle){
-        fetch('https://rickandmortyapi.com/api/episode?name=' + query + '&episode=' + this.$store.state.seasonFilterActivated)
+        fetch('https://rickandmortyapi.com/api/episode?name=' + query + '&episode=' + this.seasonFilterActivated)
             .then(response => response.json())
             .then(data => {
               this.episodes = data.results;
@@ -69,7 +65,7 @@ export default {
       }
     },
     filter(newFilter){
-      newFilter !== '' ? this.fetchEpisodeByName(this.$store.state.query) : this.initialLoad()
+      newFilter !== '' ? this.fetchEpisodeByName(this.query) : this.initialLoad()
     }
 
   }
