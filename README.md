@@ -19,6 +19,6 @@ On the branch vuex-challenge I implemented every feature detailed before but usi
 <img width="1424" alt="Screenshot 2023-03-14 at 12 24 31" src="https://user-images.githubusercontent.com/80252232/224986658-7f7628d7-97ea-446d-ae1a-539323f9a4b0.png">
 
 You can see a demo of the app in this link:
-mariorey.github.io/RickAndMortyVUE/
+https://mariorey.github.io/RickAndMortyVUE/
 
 
