@@ -16,7 +16,8 @@ This challenge is about creating a SPA emulating an eCommerce search engine usin
 On the branch vuex-challenge I implemented every feature detailed before but using the Vuex library. The advantages using the Vuex library is that you can create a store where every state created there can be accessed from any component directly.
 
 ## DEMO
-<img width="1440" alt="Screenshot 2023-03-09 at 12 25 32" src="https://user-images.githubusercontent.com/80252232/224986110-5407ee22-c69f-4dbb-9bcb-db08f07b1eb1.png">
+<img width="1424" alt="Screenshot 2023-03-14 at 12 24 31" src="https://user-images.githubusercontent.com/80252232/224986658-7f7628d7-97ea-446d-ae1a-539323f9a4b0.png">
+
 You can see a demo of the app in this link:
 mariorey.github.io/RickAndMortyVUE/
 
