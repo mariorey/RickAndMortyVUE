@@ -16,24 +16,24 @@ export default {
     },
     clickButton(event){
       if(this.filterType.toString() === 'status'){
-        this.statusFilterActivated === event.target.value ? this.$store.commit('setStatusFilterActivated', '')
-            : this.$store.commit('setStatusFilterActivated', event.target.value)
+        this.statusFilterActivated === event.target.value ? this.$store.commit('search/setStatusFilterActivated', '')
+            : this.$store.commit('search/setStatusFilterActivated', event.target.value)
       }
       else if(this.filterType.toString() === 'gender'){
-        this.genderFilterActivated === event.target.value ? this.$store.commit('setGenderFilterActivated', '')
-            : this.$store.commit('setGenderFilterActivated', event.target.value)
+        this.genderFilterActivated === event.target.value ? this.$store.commit('search/setGenderFilterActivated', '')
+            : this.$store.commit('search/setGenderFilterActivated', event.target.value)
       }
       else if(this.filterType.toString() === 'season'){
-        this.seasonFilterActivated === event.target.value ? this.$store.commit('setSeasonFilterActivated', '')
-            : this.$store.commit('setSeasonFilterActivated', event.target.value)
+        this.seasonFilterActivated === event.target.value ? this.$store.commit('search/setSeasonFilterActivated', '')
+            : this.$store.commit('search/setSeasonFilterActivated', event.target.value)
       }
     }
   },
   computed: {
+    ...mapState('search', ["statusFilterActivated", "genderFilterActivated", "seasonFilterActivated"]),
     isActive() {
-      return this.filter === this.$store.state.statusFilterActivated;
+      return this.filter === this.statusFilterActivated
     },
-    ...mapState(["statusFilterActivated", "genderFilterActivated", "seasonFilterActivated"])
 
 },
 }

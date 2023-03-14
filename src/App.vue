@@ -62,10 +62,12 @@ export default {
     this.search()
   },
   computed: {
+    ...mapState('search', ['query', 'statusFilterActivated', 'genderFilterActivated', 'prevPage', 'nextPage']),
+    ...mapState('characters', ['characters']),
     genderFilters() {
       return this.characters?.reduce((filters, character) => filters.add(character.gender), new Set()) ?? [];
     },
-    ...mapState(['characters' ,'query', 'statusFilterActivated', 'genderFilterActivated', 'prevPage', 'nextPage']),
+
   },
   watch:{
     query(){
@@ -79,11 +81,11 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['fetchAPI']),
-    search(uri = 'https://rickandmortyapi.com/api/character/?name=' + this.$store.getters.getQuery + '&status=' + this.statusFilterActivated + '&gender=' + this.genderFilterActivated) {
+    ...mapActions(['characters/fetchAPI']),
+    search(uri = 'https://rickandmortyapi.com/api/character/?name=' + this.query + '&status=' + this.statusFilterActivated + '&gender=' + this.genderFilterActivated) {
       clearTimeout(this.searchTimer);
       this.searchTimer = setTimeout(() => {
-      this.fetchAPI(uri)
+        this.$store.dispatch('characters/fetchAPI', uri);
       }, 300);
     },
 

@@ -24,7 +24,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(['query', "seasonFilterActivated"])
+    ...mapState('search', ['query', "seasonFilterActivated"])
   },
   mounted() {
     this.initialLoad()
@@ -64,7 +64,7 @@ export default {
         this.fetchEpisodeByName(newQuery);
       }
     },
-    filter(newFilter){
+    seasonFilterActivated(newFilter){
       newFilter !== '' ? this.fetchEpisodeByName(this.query) : this.initialLoad()
     }
 
