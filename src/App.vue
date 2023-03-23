@@ -37,8 +37,8 @@
   <footer class="footerInfo"> Created by <a class="gitHubLink" href="https://github.com/mariorey"> Mario Rey</a>
   </footer>
 </template>
-<script lang="js">
-import Card from './components/Card.vue'
+<script lang="ts">
+import Card from '@/components/Card.vue'
 import Filter from "@/components/Filter.vue";
 import BaseGrid from "@/components/BaseGrid.vue";
 import SearchInput from "@/components/SearchInput.vue";
@@ -47,9 +47,10 @@ import FilterList from "@/components/FilterList.vue";
 import Episodes from "@/components/Episodes.vue";
 import { mapState } from 'vuex';
 import { mapActions } from 'vuex'
+import { defineComponent } from 'vue'
 
 
-export default {
+export default defineComponent({
   components: {Episodes, FilterList, ClearButton, Filter, Card, BaseGrid, SearchInput},
   data() {
     return {
@@ -95,7 +96,7 @@ export default {
 
 
   }
-}
+})
 </script>
 
 <style scoped lang="scss">
