@@ -16,19 +16,19 @@ export interface RootState {
 }
 
 export const actions: ActionTree<CharactersState, RootState> = {
-    fetchAPI(state: any, uri: string): void{
+    fetchAPI({ commit },uri: string): void{
         fetch(uri)
             .then(response => response.json())
             .then(data => {
-                this.commit('characters/setCharacters', data.results);
-                data.info === undefined || !data.info.prev ? this.commit('search/setPrevPage', '') : this.commit('search/setPrevPage', data.info.prev)
-                data.info === undefined || !data.info.next ? this.commit('search/setNextPage', '') : this.commit('search/setNextPage', data.info.next)
+                commit('setCharacters', data.results);
+                data.info === undefined || !data.info.prev ? commit('search/setPrevPage', '',{root:true}) : commit('search/setPrevPage', data.info.prev, {root:true})
+                data.info === undefined || !data.info.next ? commit('search/setNextPage', '', {root:true}) : commit('search/setNextPage', data.info.next, {root:true})
             });
 
     }
 };
 export const mutations: MutationTree<CharactersState> = {
-    setCharacters (state: CharactersState, characters: []){
+    setCharacters (state: CharactersState, characters: []): void{
         state.characters = characters
     },
 };
